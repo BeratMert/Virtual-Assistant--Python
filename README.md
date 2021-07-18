@@ -1,4 +1,4 @@
-# Virutal Assistant  PYTHON
+# Virutal Assistant (Alexa) -- PYTHON
 
 <h2>Features</h2>
 <ul>
