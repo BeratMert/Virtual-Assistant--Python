@@ -11,6 +11,6 @@
   <li>Check your battery</li> - check battery (%59)
   <li>Open websites</li> - twitter dot com (twitter.com)
   <li>What time is it</li> - what time is it (OR) time (12:00)
-  <li>Battery Warning</li> - if your battery is less than 25 battery is warning
+  <li>Battery Warning</li> - if your battery is less than 25 your assistant is warning
   <li>Shutdown System</li> - shuwdown system (virtual assistant application closed)
 </ul>
