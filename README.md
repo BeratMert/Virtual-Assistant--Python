@@ -1,6 +1,6 @@
 # Virutal Assistant (Alexa) -- PYTHON
 
-<h2>Features</h2>
+<h2>Features AND Commands</h2>
 <ul>
   <li>Search any video on youtube</li> - search on youtube balenciaga
   <li>Open any video on youtube</li> - play balenciaga
