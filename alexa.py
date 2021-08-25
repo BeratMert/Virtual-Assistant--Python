@@ -80,6 +80,7 @@ class Alexa:
             elif "time" == command or "what time is it" == command:
                 hour = self.pullTime("hour")
                 minute = self.pullTime("min")
+                self.talk(int(hour) + ":" + int(minute))
 
             elif "search on youtube" in command:
                 command = command.replace("search on youtube ", "+")#.replace(" ", "+")
