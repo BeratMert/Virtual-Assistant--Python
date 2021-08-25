@@ -141,7 +141,7 @@ class Alexa:
                 try:
                     text = self.lissen(mic)
 
-                    if "alexa" == text:
+                    if "alexa" in text:
                         self.ding()
                         self.command()
 
