@@ -83,7 +83,7 @@ class Alexa:
                 self.talk(str(hour) + ":" + str(minute))
 
             elif "search on youtube" in command:
-                command = command.replace("search on youtube ", "+")#.replace(" ", "+")
+                command = command.replace("search on youtube ", "")
                 open("https://www.youtube.com/results?search_query=" + command)
 
             elif "search" in command:
