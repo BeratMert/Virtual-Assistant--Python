@@ -70,6 +70,10 @@ class Alexa:
                 time = command.replace("create alarm ", "").replace(":", "")
                 hour = time[0:2]
                 minute = time[2:4]
+
+                if "to" in str(hour): hour = int(2)
+                elif "to" in str(minute): minute = int(2)
+
                 alarm.Create_Alarm(hour, minute)
 
             elif "set timer" in command:
