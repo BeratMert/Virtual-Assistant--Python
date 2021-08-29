@@ -7,18 +7,21 @@ from playsound import playsound
 from psutil import sensors_battery
 from webbrowser import open
 from time import sleep
-import alarm_timer
+import set_timer
 
 
 r = Recognizer()
 engine = init()
-alarm = alarm_timer.alarm_timer()
 voices = engine.getProperty("voices")
 engine.setProperty("voice", voices[1].id)
 
+timer = set_timer.Timer()
+
 class Alexa:
     def __init__(self):
-        pass
+        self.hour = 0
+        self.minute = 0
+        self.alarm = False
 
     def talk(self, text):
         engine.say(text)
@@ -31,6 +34,13 @@ class Alexa:
     def lissen(self, mic):
         voice = r.listen(mic)
         return str(r.recognize_google(voice).lower())
+
+    def closeAlarm(self):
+        self.alarmSound()
+
+        self.alarm = False
+        self.hour = 0
+        self.minute = 0
 
     def ding(self): playsound("sounds/ding.wav")
 
@@ -51,58 +61,55 @@ class Alexa:
         elif kind == "a" or kind == "A": return str(datetime.now().strftime("%A"))# Day
         else: self.error()
 
-    def command(self):
-        with Microphone() as mic:
-            command = self.lissen(mic)
-            self.confirmSound()
+    def command(self, cmd):
+        if "open" in cmd:
+            cmd = cmd.replace("open ", "")
 
-            if "open" in command:
-                command = command.replace("open ", "")
+            if cmd == "settings": system("start ms-settings:")
+            else: system("start " + cmd)
 
-                if command == "settings": system("start ms-settings:")
-                else: system("start " + command)
+        elif "play" in cmd:
+            cmd = cmd.replace("play ", "")
+            playonyt(cmd)
 
-            elif "play" in command:
-                command = command.replace("play ", "")
-                playonyt(command)
+        elif "shutdown system" == cmd: quit()
 
-            elif "shutdown system" == command: quit()
+        elif "create alarm" in cmd:
+            time = cmd.replace("create alarm ", "").split(":")
+            self.hour = int(time[0])
+            self.minute = int(time[1])
 
-            elif "create alarm" in command:
-                time = command.replace("create alarm ", "").replace(":", "")
-                hour = time[0:2]
-                minute = time[2:4]
+            if "to" in str(self.hour): self.hour = int(2)
+            elif "to" in str(self.minute): self.minute = int(2)
+            self.alarm = True
 
-                if "to" in str(hour): hour = int(2)
-                elif "to" in str(minute): minute = int(2)
+        elif "set timer" in cmd:
+            time = cmd.replace("set timer ", "")
+            kind = time[2:].replace(" ", "")
+            timer.Set_Timer(time, kind)
 
-                alarm.Create_Alarm(hour, minute)
+        elif "time" == cmd or "what time is it" == cmd:
+            hour = self.pullTime("hour")
+            minute = self.pullTime("min")
+            self.talk(str(hour) + ":" + str(minute))
+            print(str(hour) + ":" + str(minute))
 
-            elif "set timer" in command:
-                time = command.replace("set timer ", "")
-                kind = time[2:].replace(" ", "")
-                alarm.Set_Timer(time, kind)
+        elif "search on youtube" in cmd:
+            cmd = cmd.replace("search on youtube ", "")
+            open("https://www.youtube.com/results?search_query=" + cmd)
 
-            elif "time" == command or "what time is it" == command:
-                hour = self.pullTime("hour")
-                minute = self.pullTime("min")
-                self.talk(str(hour) + ":" + str(minute))
+        elif "search" in cmd:
+            cmd = cmd.replace("search ", "")
+            search(cmd)
 
-            elif "search on youtube" in command:
-                command = command.replace("search on youtube ", "")
-                open("https://www.youtube.com/results?search_query=" + command)
+        elif "check battery" == cmd:
+            battery = self.batteryCheck()
+            self.talk(battery)
 
-            elif "search" in command:
-                command = command.replace("search ", "")
-                search(command)
+        elif ".com" in cmd or ".net" in cmd: open("https://www." + cmd)
 
-            elif "check battery" == command:
-                battery = self.batteryCheck()
-                self.talk(battery)
-
-            elif ".com" in command or ".net" in command: open("https://www." + command)
-
-            else: self.error()
+        else: 
+            self.error()
 
     def alexa(self):
         with Microphone() as mic:
@@ -112,44 +119,47 @@ class Alexa:
                 self.batterySound()
 
             while True:
-                if alarm.alarm:
+                if self.alarm:
                     n_hour = self.pullTime("hour")
                     n_minute = self.pullTime("min")
 
                     if self.hour == n_hour and self.minute == n_minute:
                         self.alarmSound()
-                        alarm.closeAlarm()
+                        self.closeAlarm()
  
-                if alarm.timer:
+                if timer.timer:
                     second = self.pullTime("sec")
                     minute = self.pullTime("min")
                     hour = self.pullTime("hour")
 
-                    if alarm.timerTime <= 60:
-                        if alarm.kind == "hour" or alarm.kind == "hours":
-                            if alarm.timerTime == hour and alarm.nowMinute == minute and alarm.nowSecond == second:
-                                alarm.closeTimer()
-                                self.alarmSound()
+                    if timer.timerTime <= 60:
+                        if timer.kind == "hour" or timer.kind == "hours":
+                            if timer.timerTime == hour and timer.nowMinute == minute and timer.nowSecond == second:
+                                timer.closeTimer()
+                                self.timerSound()
 
-                        elif alarm.kind == "minute" or alarm.kind == "minutes":
-                            if alarm.timerTime == minute and alarm.nowSecond == second:
-                                alarm.closeTimer()
-                                self.alarmSound()
+                        elif timer.kind == "minute" or timer.kind == "minutes":
+                            if timer.timerTime == minute and timer.nowSecond == second:
+                                timer.closeTimer()
+                                self.timerSound()
 
-                        elif alarm.kind == "second" or alarm.kind == "seconds":
-                            if alarm.timerTime == second:
-                                alarm.closeTimer()
-                                self.alarmSound()
+                        elif timer.kind == "second" or timer.kind == "seconds":
+                            if timer.timerTime == second:
+                                timer.closeTimer()
+                                self.timerSound()
 
                     else:
-                        alarm.timerTime = int(alarm.timerTime / 60)
+                        timer.timerTime = int(timer.timerTime / 60)
 
                 try:
                     text = self.lissen(mic)
 
                     if "alexa" in text:
                         self.ding()
-                        self.command()
+
+                        command = self.lissen(mic)
+                        self.confirmSound()
+                        self.command(command)
 
                 except Exception: pass
 
