@@ -13,6 +13,8 @@ import alarm_timer
 r = Recognizer()
 engine = init()
 alarm = alarm_timer.alarm_timer()
+voices = engine.getProperty("voices")
+engine.setProperty("voice", voices[1].id)
 
 class Alexa:
     def __init__(self):
