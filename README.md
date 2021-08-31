@@ -6,7 +6,7 @@
   <li>Search any video on youtube</li> - search on youtube balenciaga
   <li>Open any video on youtube</li> - play balenciaga
   <li>Open any program on your computer</li> - open spotify
-  <li>Search anything on google</li> - search ataturk
+  <li>Search anything on your web browser</li> - search ataturk
   <li>Create alarms</li> - create alarm nineteen nineteen (19:19)
   <li>Set timers</li> - set timer one minute (1 minute)
   <li>Check your battery</li> - check battery (%59)
